@@ -814,7 +814,7 @@ public class Tokenizer {
         String tokenizedRawFileName = "";
         String tokenizedIDFileName = "";
         threads = Runtime.getRuntime().availableProcessors();
-        Int loadLimit = 100;
+        int loadLimit = 100;
         for (int i = 0; i + 1 < args.length; ++ i) {
             switch (args[i]) {
                 case "-m": {mode = args[i + 1]; break;}
