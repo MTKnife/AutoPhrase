@@ -596,7 +596,7 @@ public class Tokenizer {
     }
 
 
-    private static void mappingBackText(String rawFileName, String targetFileName, String segmentedFileName, String tokenizedRawFileName, String tokenizedIDFileName, String language) throws IOException {
+    private static void mappingBackText(String rawFileName, String targetFileName, String segmentedFileName, String tokenizedRawFileName, String tokenizedIDFileName, String language, int loadLimit) throws IOException {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(rawFileName), "UTF8"));
             BufferedReader segmentedReader = new BufferedReader(new InputStreamReader(new FileInputStream(segmentedFileName), "UTF8"));
@@ -633,7 +633,7 @@ public class Tokenizer {
 
                             //System.err.println("tokenID = " + tokenID);
                             ++ loadCount;
-                            if (loadCount > 100) {
+                            if (loadCount > loadLimit) {
                                 System.err.println("[Fatal Error] Load Limit Exceeded! You may want to modify the load limit in the Tokenizer.java");
                                 writer.close();
                                 System.exit(-1);
@@ -814,6 +814,7 @@ public class Tokenizer {
         String tokenizedRawFileName = "";
         String tokenizedIDFileName = "";
         threads = Runtime.getRuntime().availableProcessors();
+        Int loadLimit = 100;
         for (int i = 0; i + 1 < args.length; ++ i) {
             switch (args[i]) {
                 case "-m": {mode = args[i + 1]; break;}
@@ -826,6 +827,7 @@ public class Tokenizer {
                 case "-tokenized_id": {tokenizedIDFileName = args[i + 1]; break;}
                 case "-t": {tokenMappingFileName = args[i + 1]; break;}
                 case "-thread": {threads = Math.min(threads, Integer.parseInt(args[i + 1])); break;}
+                case "-load_limit": {loadLimit = Integer.parseInt(args[i + 1]); break;}
             }
         }
         if (language.equals("")) {
@@ -863,7 +865,7 @@ public class Tokenizer {
             loadTokenMapping(tokenMappingFileName);
             tokenizeText(rawFileName, targetFileName, language, mode, case_sen);
         } else if (mode.equals("segmentation")) {
-            mappingBackText(rawFileName, targetFileName, segmentedFileName, tokenizedRawFileName, tokenizedIDFileName, language);
+            mappingBackText(rawFileName, targetFileName, segmentedFileName, tokenizedRawFileName, tokenizedIDFileName, language, loadLimit);
 
         }
         // System.out.println("Task Completed!");
